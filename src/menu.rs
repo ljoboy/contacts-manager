@@ -50,4 +50,22 @@ fn menu() {
         table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
         table.printstd();
     }
+
+    // search a contact
+    fn search_contact() {
+        println!("Enter the search term:");
+        let mut search_term = String::new();
+        std::io::stdin().read_line(&mut search_term).expect("Failed to read line");
+        let search_term = search_term.trim().to_string();
+
+        let contacts = deserialize_contacts().unwrap();
+        let mut table = table!([bFg => "Phone", "Name", "Address"]);
+        for contact in contacts {
+            if contact.get_phone().contains(&search_term) || contact.get_name().contains(&search_term) {
+                table.add_row(row![contact.get_phone(), contact.get_name(), contact.get_address()]);
+            }
+        }
+        table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
+        table.printstd();
+    }
 }
