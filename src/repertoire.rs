@@ -1,7 +1,7 @@
 use std::fmt::{Display, Formatter};
 use serde::{Serialize, Deserialize};
-use std::fs::File;
-use std::io::{Write, Read};
+use std::fs::{File, OpenOptions};
+use std::io::{Read, Write};
 
 const CONTACTS_FILE: &str = "contacts.json";
 
@@ -42,7 +42,7 @@ impl Display for Contact {
 
 // serialize a vector of contacts to a file
 pub fn serialize_contacts(contacts: &Vec<Contact>) -> std::io::Result<()> {
-    let mut file = File::create(CONTACTS_FILE)?;
+    let mut file = contacts_file();
     let serialized = serde_json::to_string(&contacts)?;
     file.write_all(serialized.as_bytes())?;
     Ok(())
@@ -50,9 +50,25 @@ pub fn serialize_contacts(contacts: &Vec<Contact>) -> std::io::Result<()> {
 
 // deserialize a vector of contacts from a file
 pub fn deserialize_contacts() -> std::io::Result<Vec<Contact>> {
-    let mut file = File::open(CONTACTS_FILE)?;
+    let mut file = contacts_file();
     let mut contents = String::new();
     file.read_to_string(&mut contents)?;
+
+    if contents.is_empty() {
+        return Ok(Vec::new());
+    }
+
     let contacts: Vec<Contact> = serde_json::from_str(&contents)?;
     Ok(contacts)
+}
+
+fn contacts_file() -> File {
+    let file = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .open(CONTACTS_FILE)
+        .expect("Failed to open contacts file");
+
+    file
 }
