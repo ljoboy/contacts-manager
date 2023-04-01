@@ -72,3 +72,7 @@ fn contacts_file() -> File {
 
     file
 }
+
+pub fn empty_contacts() {
+    contacts_file().set_len(0).expect("Failed to empty file");
+}
