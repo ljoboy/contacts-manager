@@ -1,8 +1,9 @@
+mod app;
 mod repertoire;
 
+use std::io::Result;
 
-fn main() -> std::io::Result<()> {
-    let contact = repertoire::Contact::new("1234567890".to_string(), "John".to_string(), "Doe".to_string());
-    println!("{}", contact);
+fn main() -> Result<()> {
+    app::menu();
     Ok(())
 }
