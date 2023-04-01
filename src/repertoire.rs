@@ -6,23 +6,47 @@ use std::io::{Write, Read};
 #[derive(Serialize, Deserialize)]
 pub struct Contact {
     phone: String,
-    first_name: String,
-    last_name: String,
+    name: String,
+    address: String,
 }
 
 impl Contact {
-    pub fn new(phone: String, first_name: String, last_name: String) -> Contact {
+    pub fn new(phone: String, name: String, address: Option<String>) -> Contact {
         Contact {
             phone,
-            first_name,
-            last_name,
+            name,
+            address: address.unwrap_or("".to_string()),
         }
+    }
+
+    pub fn get_phone(&self) -> &String {
+        &self.phone
+    }
+
+    pub fn get_name(&self) -> &String {
+        &self.name
+    }
+
+    pub fn get_address(&self) -> &String {
+        &self.address
+    }
+
+    pub fn set_phone(&mut self, phone: String) {
+        self.phone = phone;
+    }
+
+    pub fn set_name(&mut self, name: String) {
+        self.name = name;
+    }
+
+    pub fn set_address(&mut self, address: String) {
+        self.address = address;
     }
 }
 
 impl Display for Contact {
     fn fmt(&self, f: &mut Formatter) -> Result<(), std::fmt::Error> {
-        write!(f, "Phone: {}, First Name: {}, Last Name: {}", self.phone, self.first_name, self.last_name)
+        write!(f, "Phone: {}, Name: {}, Address: {}", self.phone, self.name, self.address)
     }
 }
 
