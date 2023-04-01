@@ -38,4 +38,12 @@ fn menu() {
         contacts.push(contact);
         serialize_contacts(&contacts).unwrap();
     }
+
+    // display all contacts
+    fn display_contacts() {
+        let contacts = deserialize_contacts().unwrap();
+        for contact in contacts {
+            println!("{}", contact);
+        }
+    }
 }
