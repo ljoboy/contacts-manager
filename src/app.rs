@@ -1,5 +1,5 @@
 use prettytable::{format, row, Table};
-use crate::repertoire::{Contact, deserialize_contacts, serialize_contacts};
+use crate::repertoire::{Contact, deserialize_contacts, empty_contacts, serialize_contacts};
 
 // menu function to display the menu and get the user's choice
 pub fn menu() {
@@ -18,7 +18,7 @@ pub fn menu() {
                 println!("Goodbye!");
                 break;
             }
-            _ => println!("Please choose a number within the menu!"),
+            _ => eprintln!("Please choose a number within the menu!"),
         }
     }
 
@@ -38,18 +38,13 @@ pub fn menu() {
         let mut contacts = deserialize_contacts().unwrap();
         contacts.push(contact);
         serialize_contacts(&contacts).unwrap();
+        println!("Contact added successfully!");
     }
 
     // display all contacts
     fn display_contacts() {
         let contacts = deserialize_contacts().unwrap();
-        let mut table = Table::new();
-        table.set_titles(row!["Phone", "Name", "Address"]);
-        for contact in contacts {
-            table.add_row(row![contact.get_phone(), contact.get_name(), contact.get_address()]);
-        }
-        table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
-        table.printstd();
+        display_table(contacts);
     }
 
     // search a contact
@@ -60,26 +55,53 @@ pub fn menu() {
         let search_term = search_term.trim().to_string();
 
         let contacts = deserialize_contacts().unwrap();
-        let mut table = Table::new();
-        table.set_titles(row!["Phone", "Name", "Address"]);
-        for contact in contacts {
-            if contact.get_phone().contains(&search_term) || contact.get_name().contains(&search_term) {
-                table.add_row(row![contact.get_phone(), contact.get_name(), contact.get_address()]);
-            }
-        }
-        table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
-        table.printstd();
+        display_table(
+            contacts.into_iter()
+                .filter(|contact|
+                    contact.get_phone().contains(&search_term) ||
+                        contact.get_name().contains(&search_term)
+                )
+                .collect()
+        );
     }
 
     // delete a contact
     fn delete_contact() {
-        println!("Enter the phone number of the contact to delete:");
+        let mut contacts = deserialize_contacts().unwrap();
         let mut phone = String::new();
+        println!("Enter the phone number of the contact to delete: ");
         std::io::stdin().read_line(&mut phone).expect("Failed to read line");
+
         let phone = phone.trim().to_string();
 
-        let mut contacts = deserialize_contacts().unwrap();
-        contacts.retain(|contact| contact.get_phone() != &phone);
-        serialize_contacts(&contacts).unwrap();
+        if let Some(index) = contacts.iter().position(|contact| contact.get_phone() == &phone) {
+            println!("Are you sure? {}", contacts.get(index).unwrap());
+            println!("y/n default: n");
+            let mut answer = String::new();
+            std::io::stdin().read_line(&mut answer).expect("Failed to read line");
+            let answer = answer.trim().to_string().to_lowercase();
+            if answer != "y" && answer != "yes" {
+                println!("Contact not deleted.");2
+                return;
+            }
+
+            contacts.remove(index);
+            empty_contacts();
+            serialize_contacts(&contacts)
+                .unwrap_or_else(|_| eprintln!("Failed to write contacts file."));
+            println!("Contact deleted successfully!");
+        } else {
+            eprintln!("Contact not found.");
+        }
+    }
+
+    fn display_table(contacts: Vec<Contact>) {
+        let mut table = Table::new();
+        table.set_titles(row!["Phone", "Name", "Address"]);
+        for contact in contacts {
+            table.add_row(row![contact.get_phone(), contact.get_name(), contact.get_address()]);
+        }
+        table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
+        table.printstd();
     }
 }
