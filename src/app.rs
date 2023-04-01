@@ -1,4 +1,4 @@
-use prettytable::{row, table, format};
+use prettytable::{format, row, Table};
 use crate::repertoire::{Contact, deserialize_contacts, serialize_contacts};
 
 // menu function to display the menu and get the user's choice
@@ -43,7 +43,8 @@ pub fn menu() {
     // display all contacts
     fn display_contacts() {
         let contacts = deserialize_contacts().unwrap();
-        let mut table = table!([bFg => "Phone", "Name", "Address"]);
+        let mut table = Table::new();
+        table.set_titles(row!["Phone", "Name", "Address"]);
         for contact in contacts {
             table.add_row(row![contact.get_phone(), contact.get_name(), contact.get_address()]);
         }
@@ -59,7 +60,8 @@ pub fn menu() {
         let search_term = search_term.trim().to_string();
 
         let contacts = deserialize_contacts().unwrap();
-        let mut table = table!([bFg => "Phone", "Name", "Address"]);
+        let mut table = Table::new();
+        table.set_titles(row!["Phone", "Name", "Address"]);
         for contact in contacts {
             if contact.get_phone().contains(&search_term) || contact.get_name().contains(&search_term) {
                 table.add_row(row![contact.get_phone(), contact.get_name(), contact.get_address()]);
