@@ -1,4 +1,4 @@
-use prettytable::{cell, row, table, Table, format};
+use prettytable::{row, table, Table, format};
 use crate::repertoire::{Contact, deserialize_contacts, serialize_contacts};
 
 // menu function to display the menu and get the user's choice
@@ -67,5 +67,17 @@ fn menu() {
         }
         table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
         table.printstd();
+    }
+
+    // delete a contact
+    fn delete_contact() {
+        println!("Enter the phone number of the contact to delete:");
+        let mut phone = String::new();
+        std::io::stdin().read_line(&mut phone).expect("Failed to read line");
+        let phone = phone.trim().to_string();
+
+        let mut contacts = deserialize_contacts().unwrap();
+        contacts.retain(|contact| contact.get_phone() != &phone);
+        serialize_contacts(&contacts).unwrap();
     }
 }
