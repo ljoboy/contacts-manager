@@ -2,6 +2,9 @@
 name = "contacts"
 version = "0.1.0"
 edition = "2021"
+authors = ["Dark Angel <jonathanyombo@gmail.com>"]
+description = "A simple contacts manager written in Rust"
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
