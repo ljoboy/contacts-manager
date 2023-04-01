@@ -20,4 +20,22 @@ fn menu() {
             _ => println!("Please choose a number between 1 and 5"),
         }
     }
+
+    // add a contact
+    fn add_contact() {
+        println!("Enter the phone number:");
+        let mut phone = String::new();
+        std::io::stdin().read_line(&mut phone).expect("Failed to read line");
+        let phone = phone.trim().to_string();
+
+        println!("Enter the name:");
+        let mut first_name = String::new();
+        std::io::stdin().read_line(&mut first_name).expect("Failed to read line");
+        let first_name = first_name.trim().to_string();
+
+        let contact = Contact::new(phone, first_name, None);
+        let mut contacts = deserialize_contacts().unwrap();
+        contacts.push(contact);
+        serialize_contacts(&contacts).unwrap();
+    }
 }
