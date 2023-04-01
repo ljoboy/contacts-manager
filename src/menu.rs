@@ -1,3 +1,4 @@
+use prettytable::{cell, row, table, Table, format};
 use crate::repertoire::{Contact, deserialize_contacts, serialize_contacts};
 
 // menu function to display the menu and get the user's choice
@@ -16,7 +17,7 @@ fn menu() {
             5 => {
                 println!("Goodbye!");
                 break;
-            },
+            }
             _ => println!("Please choose a number between 1 and 5"),
         }
     }
@@ -42,8 +43,11 @@ fn menu() {
     // display all contacts
     fn display_contacts() {
         let contacts = deserialize_contacts().unwrap();
+        let mut table = table!([bFg => "Phone", "Name", "Address"]);
         for contact in contacts {
-            println!("{}", contact);
+            table.add_row(row![contact.get_phone(), contact.get_name(), contact.get_address()]);
         }
+        table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
+        table.printstd();
     }
 }
